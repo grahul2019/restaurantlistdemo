@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Application</string>
+    <string name="no_interet_connection">No Internet Connection</string>
+    <string name="search_title">Search for restaurants</string>
 </resources>

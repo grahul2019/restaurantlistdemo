@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val editText1 = findViewById<EditText>(R.id.txtNumber1)
+        /*val editText1 = findViewById<EditText>(R.id.txtNumber1)
         val editText2 = findViewById<EditText>(R.id.txtNumber2)
         val addButton = findViewById<Button>(R.id.btnAdd);
         val txtResult = findViewById<TextView>(R.id.txtResult)
@@ -36,6 +36,6 @@ class MainActivity : AppCompatActivity() {
                 var sum : Double = number1 + number2;
                 txtResult.text = sum.toString()
             }
-        }
+        }*/
     }
 }
