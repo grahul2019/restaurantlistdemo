@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 
 abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewModelClass: KClass<VM>) : DaggerAppCompatActivity() {
 
-    private var mSnackBar:Snackbar?=null
+    var mSnackBar:Snackbar?=null
 
     // Broadcast Receiver to check for the internet connectivity.
     private val mNetworkState = InternetConnectionStateReciever()
@@ -55,7 +55,14 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
      * Display "No network connection" message/UI based on the current state
      * of the network connectivity.
      */
-    open fun showInternetError(show:Boolean){}
+    fun showInternetError(isConnected:Boolean){
+        if (!isConnected) {
+            mSnackBar = getBinding()?.root?.snack(getString(R.string.no_interet_connection),Snackbar.LENGTH_INDEFINITE)
+            mSnackBar?.show()
+        } else {
+            mSnackBar?.dismiss()
+        }
+    }
     /**
      * This method should be used to setup views. e.g Setting RecyclerView Adapters or
      * showing initial state of Activities
@@ -106,17 +113,8 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
                 val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
                 val isConnected: Boolean = activeNetwork?.isConnected == true
-
-                getNetworkAvailability(isConnected)
                 isNetworkAvailable = isConnected
-
-                if (!isConnected) {
-                    showInternetError(true)
-                    mSnackBar = getBinding()?.root?.snack(getString(R.string.no_interet_connection),Snackbar.LENGTH_INDEFINITE)
-                } else {
-                    showInternetError(false)
-                    mSnackBar?.dismiss()
-                }
+                showInternetError(isConnected)
                 cm
             }
         }

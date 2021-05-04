@@ -1,5 +1,7 @@
 package org.codejudge.application.ui.base.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +22,11 @@ abstract class BaseViewModel : ViewModel(){
      * CoroutineScope that dispatches the task on the Dispatchers.IO thread by default.
      */
     val ioScope = CoroutineScope(job + Dispatchers.IO)
+
+
+    val mNoInternetLiveData = MutableLiveData<Boolean>()
+
+    val mErrorData = MutableLiveData<String>()
 
     override fun onCleared() {
         super.onCleared()

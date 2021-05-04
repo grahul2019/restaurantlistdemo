@@ -26,7 +26,11 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
             layoutManager = LinearLayoutManager(this@HomeActivity,RecyclerView.VERTICAL,false)
             adapter = rvAdapter
         }
-        viewModel.getRestaurantList()
+        if (getInternetConnectionState()){
+            viewModel.getRestaurantList()
+        }else{
+            showInternetError(getInternetConnectionState())
+        }
     }
 
     override fun initListeners() {
@@ -41,7 +45,11 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
         getBinding()?.editSearch?.apply {
             filters = arrayOf(EmojiExcludeFilter())
             doOnTextChanged { charSequence: CharSequence?, i: Int, i1: Int, i2: Int ->
-                viewModel.searchRestaurant(charSequence.toString())
+                if (getInternetConnectionState()){
+                    viewModel.searchRestaurant(charSequence.toString())
+                }else{
+                    showInternetError(getInternetConnectionState())
+                }
                 toggleClearView(charSequence.toString()?.isNotEmpty())
                 hideKeyboard()
             }
@@ -110,6 +118,15 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
                         toggleEmptyView(false)
                     }
                 }
+            }
+
+            mNoInternetLiveData.observe(this@HomeActivity){isNotConnected->
+                toggleLoaderView(false)
+                showInternetError(!isNotConnected)
+
+            }
+            mErrorData.observe(this@HomeActivity){
+                toast(it)
             }
         }
     }
