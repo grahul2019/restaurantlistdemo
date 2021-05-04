@@ -41,13 +41,13 @@ class RestaurantListAdapter : RecyclerView.Adapter<RestaurantListAdapter.RepoVie
             item.apply {
                 tvRestaurantName.text = data.restaurantName
                 tvRating.text = "${data.restaurantRating}"
-                ivRestaurantImage?.loadImage(data.restaurantImageParams)
+                ivRestaurantImage.loadImage(data.restaurantImageParams)
                 if (data.isOpened== true) {
-                    tvRestaurantStatus?.text= "Open Now"
-                    tvRestaurantStatus?.setTextColor(ContextCompat.getColor(itemView.context,android.R.color.holo_green_light))
+                    tvRestaurantStatus.text = "Open Now"
+                    tvRestaurantStatus.setTextColor(ContextCompat.getColor(itemView.context,android.R.color.holo_green_light))
                 }else{
-                    tvRestaurantStatus?.text= "Closed"
-                    tvRestaurantStatus?.setTextColor(ContextCompat.getColor(itemView.context,android.R.color.holo_orange_light))
+                    tvRestaurantStatus.text = "Closed"
+                    tvRestaurantStatus.setTextColor(ContextCompat.getColor(itemView.context,android.R.color.holo_orange_light))
                 }
             }
         }

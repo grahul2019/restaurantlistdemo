@@ -14,10 +14,7 @@ import org.codejudge.application.R
 import org.codejudge.application.domain.model.RestaurantImageParams
 import org.codejudge.application.utils.Utils.isValidUrl
 
-/**
- *  Display Snackbar
- *
- */
+//Display Snackbar
 fun View.snack(message: String, duration: Int = Snackbar.LENGTH_SHORT): Snackbar {
     return Snackbar.make(this, message, duration)
 }

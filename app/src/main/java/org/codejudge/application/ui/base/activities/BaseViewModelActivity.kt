@@ -28,7 +28,6 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
     // Boolean to inform whether the internet connectivity is available at the moment.
     private var isNetworkAvailable: Boolean = true
 
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -51,10 +50,7 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
 
     fun getBinding() = mbinding
 
-    /**
-     * Display "No network connection" message/UI based on the current state
-     * of the network connectivity.
-     */
+    //Display "No network connection" message/UI based on the current state of the network connectivity.
     fun showInternetError(isConnected:Boolean){
         if (!isConnected) {
             mSnackBar = getBinding()?.root?.snack(getString(R.string.no_interet_connection),Snackbar.LENGTH_INDEFINITE)
@@ -63,30 +59,15 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
             mSnackBar?.dismiss()
         }
     }
-    /**
-     * This method should be used to setup views. e.g Setting RecyclerView Adapters or
-     * showing initial state of Activities
-     */
+
+    //This method should be used to setup views. e.g Setting RecyclerView Adapters or showing initial state of Activities
     open fun setupViews() {}
 
-    /**
-     * This method should be used to initialise the listeners for a view or multiple
-     * views in the activity
-     */
+    //This method should be used to initialise the listeners for a view or multiple views in the activity
     open fun initListeners() {}
 
-    /**
-     * The viewmodel's LiveData should be observed by overriding this method in the
-     * inheriting classes
-     */
+    //The viewmodel's LiveData should be observed by overriding this method in the inheriting classes
     open fun observeViewModel() {}
-
-
-    /**
-     * Function to notify the network connectivity state.
-     */
-    open fun getNetworkAvailability(isConnected: Boolean) {}
-
 
     override fun onResume() {
         super.onResume()
@@ -98,14 +79,10 @@ abstract class BaseViewModelActivity<VM : BaseViewModel,VB:ViewBinding>(viewMode
         unregisterReceiver(mNetworkState)
     }
 
-    /**
-     * Returns the current state of the network connectivity.
-     */
+    //Returns the current state of the network connectivity.
     fun getInternetConnectionState() = isNetworkAvailable
 
-    /**
-     * BroadcastReceiver Class to listen to the network state changes.
-     */
+    //BroadcastReceiver Class to listen to the network state changes.
     inner class InternetConnectionStateReciever : BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {

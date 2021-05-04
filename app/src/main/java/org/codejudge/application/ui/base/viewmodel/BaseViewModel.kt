@@ -1,6 +1,5 @@
 package org.codejudge.application.ui.base.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -8,19 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseViewModel : ViewModel(){
-    /**
-    SupervisorJob that handles each task as a separate child.
-     */
+    //SupervisorJob that handles each task as a separate child.
     private val job = SupervisorJob()
 
-    /**
-     * CoroutineScope that dispatches the task on the Dispatchers.Main thread by default.
-     */
+    //CoroutineScope that dispatches the task on the Dispatchers.Main thread by default.
     val uiScope = CoroutineScope(job + Dispatchers.Main)
 
-    /**
-     * CoroutineScope that dispatches the task on the Dispatchers.IO thread by default.
-     */
+    //CoroutineScope that dispatches the task on the Dispatchers.IO thread by default.
     val ioScope = CoroutineScope(job + Dispatchers.IO)
 
 

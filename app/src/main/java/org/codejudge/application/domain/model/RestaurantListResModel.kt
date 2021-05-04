@@ -5,7 +5,7 @@ data class RestaurantListResModel(
     val restaurantName:String?,
     val restaurantImageParams: RestaurantImageParams?,
     val restaurantRating:Double?,
-    val isOpened:Boolean? =false
+    val isOpened:Boolean?
 )
 
 data class RestaurantImageParams(
