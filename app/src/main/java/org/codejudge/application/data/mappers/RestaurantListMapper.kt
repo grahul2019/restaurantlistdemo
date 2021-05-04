@@ -25,7 +25,8 @@ class RestaurantListMapper @Inject constructor() :
             return RestaurantListResModel(
                 restaurantName = restaurantRemoteData?.name,
                 restaurantImageParams = toRestaurantImageParams(restaurantRemoteData.photos?.get(0)),
-                restaurantRating = restaurantRemoteData?.rating
+                restaurantRating = restaurantRemoteData?.rating,
+                isOpened = restaurantRemoteData?.openingHours?.openNow
             )
         }
 

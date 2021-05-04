@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <View
+        android:id="@+id/view_restaurant_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/loading_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_RestaurantName"
+        android:layout_width="200dp"
+        android:layout_height="@dimen/spacing_20"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/spacing_5"
+        android:layout_marginEnd="@dimen/spacing_10"
+        android:layout_marginRight="@dimen/spacing_10"
+        android:background="@drawable/loading_background"
+        app:layout_constraintStart_toEndOf="@id/view_restaurant_image"
+        app:layout_constraintTop_toTopOf="@id/view_restaurant_image" />
+
+    <View
+        android:id="@+id/view_restaurant_timing"
+        android:layout_width="150dp"
+        android:layout_height="@dimen/spacing_15"
+        android:layout_marginTop="@dimen/spacing_10"
+        android:layout_marginEnd="@dimen/spacing_10"
+        android:layout_marginRight="@dimen/spacing_10"
+        android:background="@drawable/loading_background"
+        app:layout_constraintStart_toStartOf="@id/view_RestaurantName"
+        app:layout_constraintTop_toBottomOf="@id/view_RestaurantName" />
+
+    <View
+        android:id="@+id/view_restaurant_details"
+        android:layout_width="100dp"
+        android:layout_height="@dimen/spacing_15"
+        android:layout_marginTop="@dimen/spacing_10"
+        android:layout_marginEnd="@dimen/spacing_10"
+        android:layout_marginRight="@dimen/spacing_10"
+        android:background="@drawable/loading_background"
+        app:layout_constraintStart_toStartOf="@id/view_restaurant_timing"
+        app:layout_constraintTop_toBottomOf="@id/view_restaurant_timing" />
+
+    <View
+        android:id="@+id/view_Rating"
+        android:layout_width="@dimen/spacing_30"
+        android:layout_height="@dimen/spacing_30"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/loading_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

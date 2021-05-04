@@ -1,6 +1,7 @@
 package org.codejudge.application.di.module
 
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import org.codejudge.application.data.remote.AppRemoteAPIService
 import org.codejudge.application.data.remote.AppRepo
@@ -33,6 +34,7 @@ abstract class AppNetworkModule {
                 .baseUrl(BuildConfig.APP_URL)
                 .addConverterFactory(GsonConverterFactory.create(Gson()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .client(okHttpClient)
                 .build()
         }
