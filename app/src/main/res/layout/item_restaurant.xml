@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
-    app:cardCornerRadius="5dp"
-    android:layout_margin="5dp">
+    app:cardCornerRadius="@dimen/dimen_5dp"
+    android:layout_margin="@dimen/dimen_5dp">
 
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
@@ -15,8 +15,8 @@
        >
        <androidx.appcompat.widget.AppCompatImageView
            android:id="@+id/iv_restaurant_image"
-           android:layout_width="80dp"
-           android:layout_height="80dp"
+           android:layout_width="@dimen/image_width_height"
+           android:layout_height="@dimen/image_width_height"
            android:scaleType="fitXY"
            app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintStart_toStartOf="parent"
@@ -27,8 +27,8 @@
            android:id="@+id/tvRestaurantName"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
-           android:layout_marginStart="10dp"
-           android:layout_marginLeft="10dp"
+           android:layout_marginStart="@dimen/spacing_10"
+           android:layout_marginLeft="@dimen/spacing_10"
            android:ellipsize="end"
            android:maxLines="2"
            android:textColor="@android:color/black"
@@ -64,8 +64,8 @@
            android:id="@+id/tvRating"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_marginStart="5dp"
-           android:layout_marginLeft="5dp"
+           android:layout_marginStart="@dimen/dimen_5dp"
+           android:layout_marginLeft="@dimen/dimen_5dp"
            android:ellipsize="end"
            android:singleLine="true"
            android:textStyle="bold"
