@@ -3,8 +3,6 @@ package org.codejudge.application.ui.search.viewmodel
 import android.accounts.NetworkErrorException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.codejudge.application.data.remote.AppRepo
 import org.codejudge.application.domain.model.RestaurantListResModel
@@ -24,7 +22,7 @@ class HomeViewModel @Inject constructor(
     fun getRestaurantList() {
         ioScope.launch {
             try {
-                _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
+               postLoaderEvent()
                 val response  = appRepo.getRestaurantList()
                 response?.let { restaurantList->
                     if (restaurantList.isNotEmpty()) {
@@ -35,20 +33,32 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     } else {
-                        _mRestaurantListData.postValue(ResultStatus(Status.EMPTY))
+                        postEmptyEvent()
                     }
                 }
             } catch (e: Exception) {
                 when (e) {
                     is NetworkErrorException, is UnknownHostException -> {
-                        _mRestaurantListData.postValue(ResultStatus.error(message = "Network Error"))
+                        postErrorEvent(message = "Network Error")
                     }
                     else -> {
-                        _mRestaurantListData.postValue(ResultStatus.error(message = e.localizedMessage))
+                        postErrorEvent(message = e.localizedMessage)
                     }
                 }
             }
         }
+    }
+
+    private fun postLoaderEvent(){
+        _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
+    }
+
+    private fun postEmptyEvent(){
+        _mRestaurantListData.postValue(ResultStatus(Status.EMPTY))
+    }
+
+    private fun postErrorEvent(message:String){
+        _mRestaurantListData.postValue(ResultStatus.error(message = message ))
     }
 
     fun searchRestaurant(searchQuery: String) {
@@ -57,7 +67,7 @@ class HomeViewModel @Inject constructor(
         } else {
             ioScope.launch {
                 try {
-                    _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
+                    postLoaderEvent()
                     val response  = appRepo.searchRestaurants(searchQuery)
                     response?.let { restaurantList->
                         if (restaurantList.isNotEmpty()) {
@@ -68,16 +78,16 @@ class HomeViewModel @Inject constructor(
                                 )
                             )
                         } else {
-                            _mRestaurantListData.postValue(ResultStatus(Status.EMPTY))
+                           postEmptyEvent()
                         }
                     }
                 } catch (e: Exception) {
                     when (e) {
                         is NetworkErrorException, is UnknownHostException -> {
-                            _mRestaurantListData.postValue(ResultStatus.error(message = "Network Error"))
+                           postErrorEvent(message = "Network Error")
                         }
                         else -> {
-                            _mRestaurantListData.postValue(ResultStatus.error(message = e.localizedMessage))
+                            postErrorEvent(message = e.localizedMessage)
                         }
                     }
                 }

@@ -5,18 +5,19 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.codejudge.application.BuildConfig
 import org.codejudge.application.R
 import org.codejudge.application.domain.model.RestaurantImageParams
+import org.codejudge.application.domain.model.RestaurantListResModel
 import org.codejudge.application.utils.Utils.isValidUrl
 
 //Display Snackbar
@@ -84,5 +85,17 @@ fun FragmentActivity.isNetworkAvailable(context: Context): Boolean {
         Log.e("Network Connectivity", e.message )
         false
     }
+}
+
+fun <R> CoroutineScope.executeAsyncTask(
+    onPreExecute: () -> Unit,
+    doInBackground: () -> R,
+    onPostExecute: (R) -> Unit
+) = launch {
+    onPreExecute()
+    val result = withContext(Dispatchers.IO) { // runs in background thread without blocking the Main Thread
+        doInBackground()
+    }
+    onPostExecute(result)
 }
 
