@@ -3,8 +3,9 @@ package org.codejudge.application.ui.search.viewmodel
 import android.accounts.NetworkErrorException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.codejudge.application.data.remote.AppRepo
 import org.codejudge.application.domain.model.RestaurantListResModel
 import org.codejudge.application.ui.base.viewmodel.BaseViewModel
@@ -14,9 +15,8 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
-    private val appRepo: AppRepo
+    private val appRepo: AppRepo,
 ) : BaseViewModel() {
-
 
     private var _mRestaurantListData = MutableLiveData<ResultStatus<List<RestaurantListResModel>>>()
     val mRestaurantList: LiveData<ResultStatus<List<RestaurantListResModel>>> = _mRestaurantListData
@@ -24,10 +24,9 @@ class HomeViewModel @Inject constructor(
     fun getRestaurantList() {
         ioScope.launch {
             try {
-                withContext(ioScope.coroutineContext) {
-                    _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
-                    appRepo.getRestaurantList()
-                }.let { restaurantList ->
+                _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
+                val response  = appRepo.getRestaurantList()
+                response?.let { restaurantList->
                     if (restaurantList.isNotEmpty()) {
                         _mRestaurantListData.postValue(
                             ResultStatus(
@@ -36,17 +35,16 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     } else {
-                        _mRestaurantListData.postValue(ResultStatus(Status.EMPTY, restaurantList))
+                        _mRestaurantListData.postValue(ResultStatus(Status.EMPTY))
                     }
-                    return@let
                 }
             } catch (e: Exception) {
                 when (e) {
                     is NetworkErrorException, is UnknownHostException -> {
-                        mNoInternetLiveData.postValue(true)
+                        _mRestaurantListData.postValue(ResultStatus.error(message = "Network Error"))
                     }
                     else -> {
-                        mErrorData.postValue(e.message)
+                        _mRestaurantListData.postValue(ResultStatus.error(message = e.localizedMessage))
                     }
                 }
             }
@@ -59,10 +57,9 @@ class HomeViewModel @Inject constructor(
         } else {
             ioScope.launch {
                 try {
-                    withContext(ioScope.coroutineContext) {
-                        _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
-                        appRepo.searchRestaurants(searchQuery)
-                    }.let { restaurantList ->
+                    _mRestaurantListData?.postValue(ResultStatus(Status.LOADING))
+                    val response  = appRepo.searchRestaurants(searchQuery)
+                    response?.let { restaurantList->
                         if (restaurantList.isNotEmpty()) {
                             _mRestaurantListData.postValue(
                                 ResultStatus(
@@ -71,22 +68,16 @@ class HomeViewModel @Inject constructor(
                                 )
                             )
                         } else {
-                            _mRestaurantListData.postValue(
-                                ResultStatus(
-                                    Status.EMPTY,
-                                    restaurantList
-                                )
-                            )
+                            _mRestaurantListData.postValue(ResultStatus(Status.EMPTY))
                         }
-                        return@let
                     }
                 } catch (e: Exception) {
                     when (e) {
                         is NetworkErrorException, is UnknownHostException -> {
-                            mNoInternetLiveData.postValue(true)
+                            _mRestaurantListData.postValue(ResultStatus.error(message = "Network Error"))
                         }
                         else -> {
-                            mErrorData.postValue(e.message)
+                            _mRestaurantListData.postValue(ResultStatus.error(message = e.localizedMessage))
                         }
                     }
                 }

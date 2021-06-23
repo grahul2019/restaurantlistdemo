@@ -7,19 +7,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseViewModel : ViewModel(){
-    //SupervisorJob that handles each task as a separate child.
-    private val job = SupervisorJob()
+    // Coroutine Job to handle operations on any particular coroutine scope. This job is cancelled
+    // when the ViewModel is destroyed.
+    private val jobDelegate = lazy { SupervisorJob() }
 
-    //CoroutineScope that dispatches the task on the Dispatchers.Main thread by default.
-    val uiScope = CoroutineScope(job + Dispatchers.Main)
+    private val job by jobDelegate
 
-    //CoroutineScope that dispatches the task on the Dispatchers.IO thread by default.
-    val ioScope = CoroutineScope(job + Dispatchers.IO)
+    private val isInitialCallMade by lazy { MutableLiveData<Boolean>() }
 
+    private val isScreenInitialCallMade by lazy { MutableLiveData<Map<String, Boolean>>() }
 
-    val mNoInternetLiveData = MutableLiveData<Boolean>()
-
-    val mErrorData = MutableLiveData<String>()
+    // Coroutine Scope that can be used to run any operation on the IO thread.
+    protected val ioScope by lazy { CoroutineScope(job + Dispatchers.IO) }
 
     override fun onCleared() {
         super.onCleared()

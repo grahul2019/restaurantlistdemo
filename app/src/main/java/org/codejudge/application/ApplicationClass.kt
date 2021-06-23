@@ -1,6 +1,5 @@
 package org.codejudge.application
 
-import org.codejudge.application.di.component.AppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import org.codejudge.application.di.component.DaggerAppComponent

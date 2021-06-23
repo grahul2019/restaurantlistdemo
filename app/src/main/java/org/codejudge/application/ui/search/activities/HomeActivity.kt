@@ -1,9 +1,10 @@
 package org.codejudge.application.ui.search.activities
 
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.codejudge.application.R
 import org.codejudge.application.databinding.ActivityMainBinding
 import org.codejudge.application.domain.model.RestaurantListResModel
@@ -12,7 +13,10 @@ import org.codejudge.application.ui.search.adapter.RestaurantListAdapter
 import org.codejudge.application.ui.search.viewmodel.HomeViewModel
 import org.codejudge.application.utils.*
 
+
 class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(HomeViewModel::class){
+
+    private var textChangedJob: Job? = null
 
     private val rvAdapter by lazy {
         RestaurantListAdapter()
@@ -20,71 +24,97 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
 
     override fun getViewBinding(): ActivityMainBinding  = ActivityMainBinding.inflate(layoutInflater)
 
-    override fun setupViews() {
-        super.setupViews()
-        getBinding()?.rvRestaurants?.apply {
+    override fun ActivityMainBinding.setupViews() {
+        rvRestaurants?.apply {
             layoutManager = LinearLayoutManager(this@HomeActivity,RecyclerView.VERTICAL,false)
             adapter = rvAdapter
         }
-        if (getInternetConnectionState()){
+        fetchData()
+    }
+
+    private fun fetchData() {
+        if (this@HomeActivity.isNetworkAvailable(this@HomeActivity)){
             viewModel.getRestaurantList()
         }else{
-            showInternetError(getInternetConnectionState())
+            getBinding()?.root?.rootView?.snack(getString(R.string.no_interet_connection))?.setAction("Retry") {
+                fetchData()
+            }?.show()
         }
     }
 
-    override fun initListeners() {
-        super.initListeners()
+    @FlowPreview
+    override fun ActivityMainBinding.initListeners() {
         fun toggleClearView(show:Boolean){
             if (show){
-                getBinding()?.ivClear?.show()
+                ivClear?.show()
             }else{
-                getBinding()?.ivClear?.remove()
+                ivClear?.remove()
             }
         }
-        getBinding()?.editSearch?.apply {
+
+       editSearch?.apply {
+            var searchFor = ""
             filters = arrayOf(EmojiExcludeFilter())
             doOnTextChanged { charSequence: CharSequence?, i: Int, i1: Int, i2: Int ->
-                if (getInternetConnectionState()){
-                    viewModel.searchRestaurant(charSequence.toString())
-                }else{
-                    showInternetError(getInternetConnectionState())
+                val searchText = charSequence.toString().trim()
+                if (searchText != searchFor) {
+                    searchFor = searchText
+                    textChangedJob?.cancel()
+                    textChangedJob = CoroutineScope(Dispatchers.Main).launch {
+                        delay(2000)
+                        if (searchText == searchFor) {
+                            searchRestaurants(searchText)
+                            hideKeyboard()
+                        }
+                    }
                 }
                 toggleClearView(charSequence.toString()?.isNotEmpty())
-                hideKeyboard()
+                if (charSequence?.isEmpty() == true){
+                    hideKeyboard()
+                }
             }
         }
-        getBinding()?.ivClear?.setOnClickListener {
-            getBinding()?.editSearch?.setText("")
+        ivClear?.setOnClickListener {
+            editSearch?.setText("")
             toggleClearView(false)
             hideKeyboard()
         }
 
     }
 
-    override fun observeViewModel() {
+    private fun searchRestaurants(query:String){
+        if (this@HomeActivity.isNetworkAvailable(this@HomeActivity)){
+            viewModel.searchRestaurant(query)
+        }else{
+            getBinding()?.root?.rootView?.snack(getString(R.string.no_interet_connection))?.setAction("Retry") {
+                viewModel.searchRestaurant(query)
+            }?.show()
+        }
+    }
+
+    override fun ActivityMainBinding.observeViewModel() {
 
         fun toggleListView(show:Boolean){
             if (show){
-                getBinding()?.rvRestaurants?.show()
+                rvRestaurants?.show()
             }else{
-                getBinding()?.rvRestaurants?.remove()
+                rvRestaurants?.remove()
             }
         }
 
         fun toggleLoaderView(show: Boolean){
             if (show){
-                getBinding()?.loader?.root?.show()
+                loader?.root?.show()
             }else{
-                getBinding()?.loader?.root?.remove()
+                loader?.root?.remove()
             }
         }
 
         fun toggleEmptyView(show:Boolean){
             if (show){
-                getBinding()?.emptyView?.root?.show()
+                emptyView?.root?.show()
             }else{
-                getBinding()?.emptyView?.root?.remove()
+                emptyView?.root?.remove()
             }
         }
 
@@ -111,6 +141,9 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
                         toggleLoaderView(false)
                         toggleListView(false)
                         toggleEmptyView(false)
+                        it.message?.let { errorMsg ->
+                            root?.rootView?.snack(errorMsg)?.show()
+                        }
                     }
                     Status.LOADING->{
                         toggleListView(false)
@@ -118,15 +151,6 @@ class HomeActivity : BaseViewModelActivity<HomeViewModel, ActivityMainBinding>(H
                         toggleEmptyView(false)
                     }
                 }
-            }
-
-            mNoInternetLiveData.observe(this@HomeActivity){isNotConnected->
-                toggleLoaderView(false)
-                showInternetError(!isNotConnected)
-
-            }
-            mErrorData.observe(this@HomeActivity){
-                toast(it)
             }
         }
     }

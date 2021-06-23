@@ -1,30 +1,31 @@
 package org.codejudge.application.utils
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.fragment.app.Fragment
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.codejudge.application.BuildConfig
 import org.codejudge.application.R
 import org.codejudge.application.domain.model.RestaurantImageParams
 import org.codejudge.application.utils.Utils.isValidUrl
 
 //Display Snackbar
-fun View.snack(message: String, duration: Int = Snackbar.LENGTH_SHORT): Snackbar {
+fun View.snack(message: String, duration: Int = Snackbar.LENGTH_INDEFINITE): Snackbar {
     return Snackbar.make(this, message, duration)
 }
 
 fun FragmentActivity.toast(message: String, isLong: Boolean = false) {
     Toast.makeText(this, message, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
-}
-
-fun Fragment.toast(message: String, isLong: Boolean = false) {
-    requireActivity().toast(message, isLong)
 }
 
 fun View.remove() {
@@ -73,3 +74,15 @@ fun AppCompatImageView.loadImage(imageParams: RestaurantImageParams?) {
         }
     }
 }
+
+fun FragmentActivity.isNetworkAvailable(context: Context): Boolean {
+    return try {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        netInfo != null && netInfo.isAvailable && netInfo.isConnected
+    } catch (e: Exception) {
+        Log.e("Network Connectivity", e.message )
+        false
+    }
+}
+

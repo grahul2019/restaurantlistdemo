@@ -20,7 +20,6 @@ object Utils {
 
 class EmojiExcludeFilter : InputFilter {
 
-
     override fun filter(charSequence: CharSequence, start: Int, end: Int, spanned: Spanned, mStart: Int, mEnd: Int): CharSequence? {
         for (i in start until end) {
             val type = Character.getType(charSequence[i])
